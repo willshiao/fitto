@@ -6,6 +6,7 @@ import * as serviceWorker from './serviceWorker';
 import { Client as Styletron } from 'styletron-engine-atomic';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { DarkTheme, BaseProvider } from 'baseui';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const engine = new Styletron();
 

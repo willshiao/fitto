@@ -8,7 +8,7 @@
   }
 }
 
-.Session__posenet {
+.Session__posenetModal {
   display: block;
   margin: 0 auto;
   margin-top: 32px;
@@ -22,4 +22,8 @@
   font-size: 96px;
   padding-top: 32px;
   padding-bottom: 48px;
+}
+
+.Session__posenetMain {
+  width: 256px
 }

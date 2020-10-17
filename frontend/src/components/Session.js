@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
   Modal,
   ModalHeader,
@@ -8,20 +8,23 @@ import {
   SIZE,
   ROLE
 } from "baseui/modal";
-import { KIND as ButtonKind } from "baseui/button";
+import { Button, KIND as ButtonKind } from "baseui/button";
 import { Spinner } from "baseui/spinner";
 import PoseNet from "react-posenet"
 import { Redirect } from "react-router-dom";
 import "./Session.scss";
 import sendVideo from '../services/video';
+import ReactPlayer from 'react-player';
 
 function Session(props) {
   const [isOpen, setIsOpen] = useState(true);
   const [backClicked, setBackClicked] = useState(false);
   const [countingDown, setCountingDown] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
+  const [videoPlaying, setVideoPlaying] = useState(false);
   const [counter, setCounter] = useState(3);
   const [data, setData] = useState(null);
+  const youtubeEl = useRef(null);
 
   // useEffect(() => {
   //   const { location: { state: { value } } } = props;
@@ -92,7 +95,7 @@ function Session(props) {
           ) : (
             <>
               Make sure you’ve allowed browser permissions!
-            {/* <PoseNet className="Session__posenet" onEstimate={handleEstimate} /> */}
+            {/* <PoseNet className="Session__posenetModal" /> */}
             </>
           )}
         </ModalBody>
@@ -111,6 +114,11 @@ function Session(props) {
     return modalLoading ? loadingContent : preparationContent;
   };
 
+  const onButtonClick = () => {
+    console.log(youtubeEl.current.getCurrentTime())
+    setVideoPlaying(prevVideoPlaying => !prevVideoPlaying);
+  }
+
   if (backClicked) {
     return <Redirect push to={{ pathname: "/" }} />;
   }
@@ -128,6 +136,9 @@ function Session(props) {
       >
         {renderModalContent()}
       </Modal>
+      <ReactPlayer url="https://www.youtube.com/embed/ckiaNqOrG5U" ref={youtubeEl} playing={videoPlaying} />
+      {/* <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} /> */}
+      <Button onClick={onButtonClick}>Click</Button>
     </>
   );
 }
