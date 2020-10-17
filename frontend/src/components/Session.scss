@@ -4,6 +4,7 @@
   .Session__spinner {
     display: block;
     margin: 0 auto;
+    margin-bottom: 48px;
   }
 }
 
@@ -14,4 +15,11 @@
   margin-bottom: 0;
   width: 256px;
   height: 192px;
+}
+
+.Session__count {
+  text-align: center;
+  font-size: 96px;
+  padding-top: 32px;
+  padding-bottom: 48px;
 }

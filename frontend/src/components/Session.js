@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Modal,
   ModalHeader,
@@ -13,13 +13,57 @@ import { Spinner } from "baseui/spinner";
 import PoseNet from "react-posenet"
 import { Redirect } from "react-router-dom";
 import "./Session.scss";
+import sendVideo from '../services/video';
 
 function Session(props) {
   const [isOpen, setIsOpen] = useState(true);
-  const [backClicked, setBackClicked ] = useState(false);
+  const [backClicked, setBackClicked] = useState(false);
+  const [countingDown, setCountingDown] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false);
+  const [counter, setCounter] = useState(3);
+  const [data, setData] = useState(null);
 
-  const handleEstimate = poses =>  {
+  // useEffect(() => {
+  //   const { location: { state: { value } } } = props;
+  //   console.log("got value", value);
+
+  //   const data = { text: "hi" };
+
+  //   if (!data) {
+  //     sendVideo(value)
+  //       .then(response => {
+  //         console.log("Got response")
+  //       })
+  //       .catch(error => {
+  //         console.log("Error", error);
+  //       });
+  //   }
+
+  //   if (countingDown) {
+  //     if (counter > 0) {
+  //       setTimeout(() => setCounter(counter - 1), 1000);
+  //   } else {
+  //       setIsOpen(false);
+  //     }
+  //   }
+  // }, [countingDown, counter, props]);
+
+  const handleEstimate = poses => {
     console.log("poses", poses);
+  };
+
+  const handleStart = () => {
+    const { location: { state: { videoUrl } } } = props;
+    setModalLoading(true);
+    sendVideo(videoUrl)
+      .then(response => {
+        console.log("Got response", response);
+      })
+      .catch(error => {
+        console.error("Error", error);
+        setIsOpen(false);
+      })
+    // send info
   };
 
   const renderModalContent = () => {
@@ -34,14 +78,6 @@ function Session(props) {
             <Spinner className="Session__spinner" />
           </div>
         </ModalBody>
-        <ModalFooter>
-          <ModalButton
-            kind={ButtonKind.tertiary}
-            onClick={() => setBackClicked(true)}
-          >
-            Back
-          </ModalButton>
-        </ModalFooter>
       </>
     );
 
@@ -51,8 +87,14 @@ function Session(props) {
           Are you prepared?
         </ModalHeader>
         <ModalBody>
-          Make sure you’ve allowed browser permissions!
-          <PoseNet className="Session__posenet" onEstimate={handleEstimate} />
+          {countingDown ? (
+            <div className="Session__count">{counter}</div>
+          ) : (
+            <>
+              Make sure you’ve allowed browser permissions!
+            {/* <PoseNet className="Session__posenet" onEstimate={handleEstimate} /> */}
+            </>
+          )}
         </ModalBody>
         <ModalFooter>
           <ModalButton
@@ -61,11 +103,12 @@ function Session(props) {
           >
             Back
           </ModalButton>
+          <ModalButton onClick={handleStart}>Start</ModalButton>
         </ModalFooter>
       </>
     );
 
-    return loadingContent;
+    return modalLoading ? loadingContent : preparationContent;
   };
 
   if (backClicked) {
@@ -73,17 +116,19 @@ function Session(props) {
   }
 
   return (
-    <Modal
-      onClose={() => setIsOpen(false)}
-      closeable
-      isOpen={isOpen}
-      animate
-      autoFocus
-      size={SIZE.default}
-      role={ROLE.dialog}
-    >
-      {renderModalContent()}
-    </Modal>
+    <>
+      <Modal
+        onClose={() => setIsOpen(false)}
+        closeable
+        isOpen={isOpen}
+        animate
+        autoFocus
+        size={SIZE.default}
+        role={ROLE.dialog}
+      >
+        {renderModalContent()}
+      </Modal>
+    </>
   );
 }
 
