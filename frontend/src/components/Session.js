@@ -10,6 +10,7 @@ import {
 } from "baseui/modal";
 import { KIND as ButtonKind } from "baseui/button";
 import { Spinner } from "baseui/spinner";
+import PoseNet from "react-posenet"
 import { Redirect } from "react-router-dom";
 import "./Session.scss";
 
@@ -17,8 +18,12 @@ function Session(props) {
   const [isOpen, setIsOpen] = useState(true);
   const [backClicked, setBackClicked ] = useState(false);
 
+  const handleEstimate = poses =>  {
+    console.log("poses", poses);
+  };
+
   const renderModalContent = () => {
-    return (
+    const loadingContent = (
       <>
         <ModalHeader>
           Just hang tight...
@@ -30,13 +35,37 @@ function Session(props) {
           </div>
         </ModalBody>
         <ModalFooter>
-          <ModalButton kind={ButtonKind.tertiary} onClick={() => setBackClicked(true)}>
+          <ModalButton
+            kind={ButtonKind.tertiary}
+            onClick={() => setBackClicked(true)}
+          >
             Back
           </ModalButton>
-          <ModalButton>Okay</ModalButton>
         </ModalFooter>
       </>
     );
+
+    const preparationContent = (
+      <>
+        <ModalHeader>
+          Are you prepared?
+        </ModalHeader>
+        <ModalBody>
+          Make sure you’ve allowed browser permissions!
+          <PoseNet className="Session__posenet" onEstimate={handleEstimate} />
+        </ModalBody>
+        <ModalFooter>
+          <ModalButton
+            kind={ButtonKind.tertiary}
+            onClick={() => setBackClicked(true)}
+          >
+            Back
+          </ModalButton>
+        </ModalFooter>
+      </>
+    );
+
+    return loadingContent;
   };
 
   if (backClicked) {
