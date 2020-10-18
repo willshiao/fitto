@@ -22,6 +22,7 @@ import Navigation from './Navigation';
 const socket = socketIOClient(BASE_URL);
 
 function Session(props) {
+  console.log('New Session created')
   const [isOpen, setIsOpen] = useState(true);
   const [backClicked, setBackClicked] = useState(false);
   const [countingDown, setCountingDown] = useState(false);
@@ -40,11 +41,13 @@ function Session(props) {
   const youtubeEl = useRef(null);
 
   useEffect(() => {
-    socket.on("poses:res", data => {
-      console.log("Got back data", data);
-      const { score } = data;
-      setUserScore(score.toFixed(2));
-    });
+    if (!socket.hasListeners('poses:res')) {
+      socket.on('poses:res', data => {
+        console.log("Got back data", data);
+        const { score } = data;
+        setUserScore(score.toFixed(2));
+      });
+    }
   });
 
   const handleEstimate = poses => {
@@ -65,7 +68,7 @@ function Session(props) {
     }
 
     if (currentTime !== totalDuration && currentTime > 0) {
-      if (difference < 2) {
+      if (difference < 3) {
         setPoseBatch(prevPoseBatch => [...prevPoseBatch, obj]);
       } else {
         console.log("Sending batch", poseBatch);
@@ -73,7 +76,7 @@ function Session(props) {
         socket.emit("poses:req", {
           startTime: prevTime,
           endTime: currentTime,
-          videoUrl: "https://www.youtube.com/watch?v=jvY06zoY0M4",
+          videoUrl: "https://www.youtube.com/watch?v=vHBR5MZmEsY",
           poseBatch
         });
   
@@ -85,7 +88,7 @@ function Session(props) {
         socket.emit("poses:req", {
           startTime: prevTime,
           endTime: currentTime,
-          videoUrl: "https://www.youtube.com/watch?v=jvY06zoY0M4",
+          videoUrl: "https://www.youtube.com/watch?v=vHBR5MZmEsY",
           poseBatch
         });
   
@@ -225,7 +228,7 @@ function Session(props) {
       </div>}
       {youtubeUrl && <div className="Session__view">
       <ReactPlayer
-        url="https://www.youtube.com/watch?v=jvY06zoY0M4"
+        url="https://www.youtube.com/watch?v=vHBR5MZmEsY"
         ref={youtubeEl}
         playing={videoPlaying}
         onEnded={handleVideoDone}
