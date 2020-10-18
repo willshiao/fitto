@@ -148,7 +148,7 @@ function Session(props) {
           ) : (
             <>
               Make sure you’ve allowed browser permissions!
-            {/* <PoseNet className="Session__posenetModal" /> */}
+            <PoseNet className="Session__posenetModal" />
             </>
           )}
         </ModalBody>
@@ -170,14 +170,7 @@ function Session(props) {
           Oops, something went wrong!
         </ModalHeader>
         <ModalBody>
-          {countingDown ? (
-            <div className="Session__count">{counter}</div>
-          ) : (
-            <>
-              Try again in a bit and see if it'll work.
-            {/* <PoseNet className="Session__posenetModal" /> */}
-            </>
-          )}
+          Try again in a bit and see if it'll work.
         </ModalBody>
         <ModalFooter>
           <ModalButton
@@ -218,7 +211,7 @@ function Session(props) {
   }
 
   return (
-    <>
+    <div className="Session">
       <Navigation />
       {!isOpen && <div className="Session__scoreWrapper">
         <p className="Session__accuracy">ACCURACY</p>
@@ -249,7 +242,7 @@ function Session(props) {
       >
         {renderModalContent()}
       </Modal>
-    </>
+    </div>
   );
 }
 

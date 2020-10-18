@@ -6,6 +6,7 @@ import Navigation from './Navigation';
 import { LightTheme, BaseProvider } from 'baseui';
 import banner from '../assets/banner.svg';
 import './Home.scss';
+import featuredData from '../featuredData';
 
 function Home() {
   const [value, setValue] = useState("");
@@ -45,6 +46,37 @@ function Home() {
           </div>
         </div>
         <img src={banner} alt="" className="Home__banner"/>
+      </div>
+      <div className="Home__featured container-fluid">
+        <div className="row justify-content-center">
+          <div className="col-9">
+            <div className="Home__featuredTitle">Featured</div>
+          </div>
+        </div>
+        <div className="row justify-content-center">
+          <div className="col-9">
+            <div className="row justify-content-center">
+              {featuredData.map(({ thumbnail, duration, title, username }) => (
+                <div className="col-4">
+                  <div className="Home__featuredCard" onClick={() => {}}>
+                    <img className="Home__videoThumbnail" src={thumbnail} alt=""/>
+                    <div className="Home__videoDuration">
+                      {duration}
+                    </div>
+                    <div className="Home__videoUser">
+                      <div className="Home__videoTitle">
+                        {title}
+                      </div>
+                      <div className="Home__videoUsername">
+                        {username}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </BaseProvider>
   );

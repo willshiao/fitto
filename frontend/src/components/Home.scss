@@ -26,3 +26,46 @@
     margin-bottom: 32px;
   }
 }
+
+.Home__featured {
+  padding-top: 36px;
+  .Home__featuredTitle {
+    color: white;
+    margin-bottom: 12px;
+  }
+
+  .Home__featuredCard {
+    position: relative;
+    color: white;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 100%;
+    margin-bottom: 24px;
+
+    .Home__videoThumbnail {
+      width: 100%;
+    }
+
+    .Home__videoDuration {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 18px;
+    }
+
+    .Home__videoUser {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+
+      .Home__videoTitle {
+        font-size: 16px;
+      }
+
+      .Home__videoUsername {
+        font-size: 12px;
+      }
+    }
+  }
+}

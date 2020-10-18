@@ -1,3 +1,7 @@
+.Session {
+  min-height: 100vh;
+}
+
 .Session__spinnerWrapper {
   padding-top: 32px;
 
@@ -15,6 +19,8 @@
   margin-bottom: 0;
   width: 256px;
   height: 192px;
+  transform: scale(-1, 1);
+  filter: FlipH;
 }
 
 .Session__count {
@@ -29,6 +35,8 @@
   height: 360px;
   width: 432px;
   margin: auto 8px;
+  transform: scale(-1, 1);
+  filter: FlipH;
 }
 
 .Session__youtube {
