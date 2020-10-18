@@ -103,4 +103,4 @@ def video_route():
     return { 'success': True, 'videoUrl': yt_url }
 
 if __name__ == '__main__':
-    app.run(debug=True, port=3000)
+    app.run(debug=True, port=3000, host='0.0.0.0')
