@@ -8,22 +8,29 @@ import torch
 import posenet
 
 class PoseExtractor:
-    __init__(self, cuda=True):
-        self.model = posenet.load_model(args.model)
+    def __init__(self, cuda=True, model=101, scale_factor=1.0):
+        self.model = posenet.load_model(model)
+        self.scale_factor = scale_factor
         self.cuda = cuda
         if cuda:
             self.model = self.model.cuda()
         self.output_stride = self.model.output_stride
 
-    def get_poses_from_video(self, vid_path, frame_cb = None, skip_every_frames=10, skip_first=0):
+    def get_poses_from_video(self, vid_path, frame_cb = None, skip_every_frames=8, skip_first=0):
+        frames_elasped = 0
         cap = cv2.VideoCapture(vid_path)
+        fps = cap.get(5)
+        print(f'FPS: {fps}')
+
         if skip_first > 0:
             cap.set(cv2.CAP_PROP_POS_FRAMES, skip_first)
         while(cap.isOpened()):
+            frames_elasped += 1
             done = False
-            for i in range(skip_every_frames):
+            for _ in range(skip_every_frames):
                 if cap.isOpened():
                     cap.grab()
+                    frames_elasped += 1
                 else:
                     done = True
                     break
@@ -31,7 +38,7 @@ class PoseExtractor:
                 break
 
             input_image, display_image, output_scale = posenet.read_cap(
-                cap, scale_factor=args.scale_factor, output_stride=output_stride)
+                cap, scale_factor=self.scale_factor, output_stride=self.output_stride)
 
             with torch.no_grad():
                 input_image = torch.Tensor(input_image)
@@ -44,10 +51,10 @@ class PoseExtractor:
                     offsets_result.squeeze(0),
                     displacement_fwd_result.squeeze(0),
                     displacement_bwd_result.squeeze(0),
-                    output_stride=output_stride,
+                    output_stride=self.output_stride,
                     max_pose_detections=1,
                     min_pose_score=0.25)
 
                 if frame_cb is not None:
-                    frame_cb(pose_scores, keypoint_scores, keypoint_coords)
+                    frame_cb(pose_scores, keypoint_scores, keypoint_coords, frames_elasped, fps)
         return True
