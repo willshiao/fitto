@@ -1,2 +1,2 @@
-export const SOCKET_URL = "http://9d0a8e8f05aa.ngrok.io";
-export const BASE_URL = "http://587c11a04d8b.ngrok.io/";
+export const SOCKET_URL = "http://35.230.97.252:5000";
+export const BASE_URL = "http://35.230.97.252:3000";
