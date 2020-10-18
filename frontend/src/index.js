@@ -3,11 +3,19 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import { Client as Styletron } from 'styletron-engine-atomic';
+import { Provider as StyletronProvider } from 'styletron-react';
+import { DarkTheme, BaseProvider } from 'baseui';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const engine = new Styletron();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <StyletronProvider value={engine}>
+    <BaseProvider theme={DarkTheme}>
+      <App />
+    </BaseProvider>
+  </StyletronProvider>,
   document.getElementById('root')
 );
 

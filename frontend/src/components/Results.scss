@@ -1,0 +1,26 @@
+.Results {
+  .Results__content {
+    padding-top: 164px;
+  }
+
+  .Results__image {
+    width: 95%
+  }
+  
+  .Results__score {
+    color: white;
+    text-align: center;
+    font-size: 96px;
+  }
+  
+  .Results__info {
+    color: white;
+    padding: 0 24px;
+  }
+
+  .Results__finish {
+    display: block;
+    margin: 0 auto;
+    margin-top: 32px;
+  }
+}
