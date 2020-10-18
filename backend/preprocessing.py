@@ -1,3 +1,4 @@
+from collections import defaultdict
 import cv2
 import time
 import argparse
@@ -11,6 +12,7 @@ from fastdtw import fastdtw
 import re
 import numpy as np
 
+EPS=0.000001
 
 PART_NAMES = [
     "leftShoulder", "rightShoulder", "leftElbow", "rightElbow", "leftWrist", "rightWrist",
@@ -42,35 +44,57 @@ def normalize(pose_scores, keypoint_scores, keypoint_coords, thresh=0.1):
             output[posenet.PART_NAMES[i]] = (normalized_coords[i, 0], normalized_coords[i, 1])
     return output
 
-def TimeSeries(dictionaries):
+def to_timeseries(dictionaries):
     # combines list of dictionaries
-    TimeSeries = {}
-    # Iterate every part name and combine part values
-    for k in PART_NAMES:
-        tups = [TimeSeries[k] for TimeSeries in dictionaries if k in TimeSeries]
-        TimeSeries[k] = ()
-        for t in tups:
-            TimeSeries[k] += t
-    return TimeSeries
+    ts = defaultdict(list)
 
-def DTW(dict1,dict2):
+    # Iterate every part name and combine part values
+    for mini_dict in dictionaries:
+        for k, v in mini_dict.items():
+            ts[k].append(v)
+    return ts
+
+def crop_dict(pose_dict):
+    min_x = 10**6
+    min_y = 10**6
+    for v in pose_dict.values():
+        if v[0] <= min_x:
+            min_x = v[0]
+        if v[1] <= min_y:
+            min_y = v[1]
+
+    for k in pose_dict.keys():
+        pose_dict[k][0] -= min_x
+        pose_dict[k][1] -= min_y
+
+    return pose_dict
+
+
+def DTW(dict1, dict2, normalize_user=False):
     # computes the DTW between two dictionaries & values
     # outputs distances to dictionary distances
     distances = {}
     for key in dict1:
         if key in PART_NAMES:
             if dict1[key] and dict2[key]:
-                x = np.array(dict1[key]) + 0.00001
-                y = np.array(dict2[key]) + 0.00001
-                distances[key] = fastdtw(x, y, dist=cosine)[0]
+                x = np.array(dict1[key]) + EPS
+                y = np.array(dict2[key]) + EPS
+                if normalize_user:
+                    x = preprocessing.normalize(x, norm='l2')
+                print(f'matrices for {key}:', x, y)
+                dist, path = fastdtw(x, y, dist=cosine)
+                distances[key] = dist/len(path)
     return distances
 
 
-def MovePart(distances):
+def get_avg_dist(dist_dict):
+    return np.mean(list(dist_dict.values()))
+
+def get_part_to_move(distances):
     # Prints and outputs which body part to use
     # Calculated by body part with the highest distance in DTW
     movePart = max(distances, key=distances.get)
-    res_list = re.sub("([a-z])([A-Z])","\g<1> \g<2>", movePart)
+    res_list = re.sub(r"([a-z])([A-Z])","\g<1> \g<2>", movePart)
     movePart = ''.join(res_list).lower()
     print('Move your %s.' %movePart)
     return movePart
