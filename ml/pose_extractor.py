@@ -37,6 +37,8 @@ class PoseExtractor:
             if done:
                 break
 
+            if not cap.isOpened():
+                break
             input_image, display_image, output_scale = posenet.read_cap(
                 cap, scale_factor=self.scale_factor, output_stride=self.output_stride)
 
