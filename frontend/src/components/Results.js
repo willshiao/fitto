@@ -14,7 +14,7 @@ function Results(props) {
   }
 
   return (
-    <div className="Results">
+    <div className="Results container-fluid">
       <Navigation />
       <div className="Results__content">
         <div className="row justify-content-center">

@@ -1,7 +1,7 @@
-.bg-dark {
-  background-color: #161616 !important;
-}
+.Navigation__wrapper {
+  position: absolute;
 
-.Navigation__search {
-  display: flex;
+  .Navigation__nav {
+    bottom: 0;
+  }
 }

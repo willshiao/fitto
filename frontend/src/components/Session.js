@@ -16,8 +16,8 @@ import "./Session.scss";
 import sendVideo from '../services/video';
 import ReactPlayer from 'react-player';
 import socketIOClient from "socket.io-client";
+import { BASE_URL } from '../constants';
 
-const BASE_URL = "http://b9c7f8f67b95.ngrok.io";
 const socket = socketIOClient(BASE_URL);
 
 function Session(props) {
@@ -26,41 +26,18 @@ function Session(props) {
   const [countingDown, setCountingDown] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
-  const [isSessionOver, setIsSessionOver] = useState(false);
   const [lastOneSent, setLastOneSent] = useState(false);
   const [showWinner, setShowWinner] = useState(false);
+  const [hasError, setHasError] = useState(false);
   const [counter, setCounter] = useState(3);
   const [userScore, setUserScore] = useState(0);
   const [data, setData] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState(null);
   const [prevTime, setPrevTime] = useState(0);
   const [poseBatch, setPoseBatch] = useState([]);
+  const [accuracies, setAccuracies] = useState([]);
   const youtubeEl = useRef(null);
 
-  // useEffect(() => {
-  //   const { location: { state: { value } } } = props;
-  //   console.log("got value", value);
-
-  //   const data = { text: "hi" };
-
-  //   if (!data) {
-  //     sendVideo(value)
-  //       .then(response => {
-  //         console.log("Got response")
-  //       })
-  //       .catch(error => {
-  //         console.log("Error", error);
-  //       });
-  //   }
-
-  //   if (countingDown) {
-  //     if (counter > 0) {
-  //       setTimeout(() => setCounter(counter - 1), 1000);
-  //   } else {
-  //       setIsOpen(false);
-  //     }
-  //   }
-  // }, [countingDown, counter, props]);
   useEffect(() => {
     socket.on("poses:res", data => {
       console.log("Got back data", data);
@@ -74,21 +51,28 @@ function Session(props) {
     const totalDuration = youtubeEl.current.getDuration();
     const difference = currentTime - prevTime;
 
-    // const pose = poses[0];
-    // const { keypoints } = pose;
-    // Object.keys(keypoints).forEach((key, index) => {
-      
-    // })
+    const pose = poses[0];
+    let obj;
+
+    if (pose && pose.keypoints) {
+      const { keypoints } = pose;
+      keypoints.forEach(keypoint => {
+        const { part, position } = keypoint;
+        const { x, y } = position;
+        obj = { ...obj, [part]: [x, y] };
+      });
+    }
 
     if (currentTime !== totalDuration && currentTime > 0) {
       if (difference < 2) {
-        setPoseBatch(prevPoseBatch => [...prevPoseBatch, poses]);
+        setPoseBatch(prevPoseBatch => [...prevPoseBatch, obj]);
       } else {
         console.log("Sending batch", poseBatch);
 
         socket.emit("poses:req", {
           startTime: prevTime,
           endTime: currentTime,
+          videoUrl: "https://www.youtube.com/watch?v=jvY06zoY0M4",
           poseBatch
         });
   
@@ -100,6 +84,7 @@ function Session(props) {
         socket.emit("poses:req", {
           startTime: prevTime,
           endTime: currentTime,
+          videoUrl: "https://www.youtube.com/watch?v=jvY06zoY0M4",
           poseBatch
         });
   
@@ -114,6 +99,7 @@ function Session(props) {
   const handleStart = () => {
     const { location: { state: { videoUrl } } } = props;
     setModalLoading(true);
+    setHasError(false);
 
     sendVideo(videoUrl)
       .then(response => {
@@ -121,11 +107,14 @@ function Session(props) {
         const { videoUrl } = response;
 
         setIsOpen(false);
+        setModalLoading(false);
+        setHasError(false);
         setYoutubeUrl(videoUrl);
       })
       .catch(error => {
         console.error("Error", error);
-        setIsOpen(false);
+        setModalLoading(false);
+        setHasError(true);
       });
   };
 
@@ -171,7 +160,40 @@ function Session(props) {
       </>
     );
 
-    return modalLoading ? loadingContent : preparationContent;
+    const errorContent = (
+      <>
+        <ModalHeader>
+          Oops, something went wrong!
+        </ModalHeader>
+        <ModalBody>
+          {countingDown ? (
+            <div className="Session__count">{counter}</div>
+          ) : (
+            <>
+              Try again in a bit and see if it'll work.
+            {/* <PoseNet className="Session__posenetModal" /> */}
+            </>
+          )}
+        </ModalBody>
+        <ModalFooter>
+          <ModalButton
+            kind={ButtonKind.tertiary}
+            onClick={() => setBackClicked(true)}
+          >
+            Back
+          </ModalButton>
+          <ModalButton onClick={handleStart}>Try again</ModalButton>
+        </ModalFooter>
+      </>
+    )
+
+    if (modalLoading) {
+      return loadingContent;
+    } else if (hasError) {
+      return errorContent;
+    }
+
+    return preparationContent;
   };
 
   const onButtonClick = () => {
@@ -222,7 +244,7 @@ function Session(props) {
           </div>
           {youtubeUrl && <div className="Session__view">
           <ReactPlayer
-            url="https://www.youtube.com/watch?v=rUWxSEwctFU"
+            url="https://www.youtube.com/watch?v=jvY06zoY0M4"
             ref={youtubeEl}
             playing={videoPlaying}
             onEnded={handleVideoDone}
