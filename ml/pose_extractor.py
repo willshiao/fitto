@@ -20,9 +20,16 @@ class PoseExtractor:
         if skip_first > 0:
             cap.set(cv2.CAP_PROP_POS_FRAMES, skip_first)
         while(cap.isOpened()):
-            cnt += 1
-            for i in range(10):
-                cap.grab()
+            done = False
+            for i in range(skip_every_frames):
+                if cap.isOpened():
+                    cap.grab()
+                else:
+                    done = True
+                    break
+            if done:
+                break
+
             input_image, display_image, output_scale = posenet.read_cap(
                 cap, scale_factor=args.scale_factor, output_stride=output_stride)
 
