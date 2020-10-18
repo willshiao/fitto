@@ -28,7 +28,7 @@ function Session(props) {
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [isSessionOver, setIsSessionOver] = useState(false);
   const [lastOneSent, setLastOneSent] = useState(false);
-  const [showWinner, setShowWinner] = useState(true);
+  const [showWinner, setShowWinner] = useState(false);
   const [counter, setCounter] = useState(3);
   const [userScore, setUserScore] = useState(0);
   const [data, setData] = useState(null);
@@ -65,17 +65,23 @@ function Session(props) {
     socket.on("poses:res", data => {
       console.log("Got back data", data);
       const { score } = data;
-      setUserScore(score);
-    })
-  })
+      setUserScore(score.toFixed(2));
+    });
+  });
 
   const handleEstimate = poses => {
     const currentTime = youtubeEl.current.getCurrentTime();
     const totalDuration = youtubeEl.current.getDuration();
     const difference = currentTime - prevTime;
 
-    if (currentTime !== totalDuration) {
-      if (difference < 5) {
+    const pose = poses[0];
+    const { keypoints } = pose;
+    Object.keys(keypoints).forEach((key, index) => {
+      
+    })
+
+    if (currentTime !== totalDuration && currentTime > 0) {
+      if (difference < 2) {
         setPoseBatch(prevPoseBatch => [...prevPoseBatch, poses]);
       } else {
         console.log("Sending batch", poseBatch);
@@ -89,7 +95,7 @@ function Session(props) {
         setPrevTime(currentTime);
         setPoseBatch([]);
       }
-    } else {
+    } else if (currentTime === totalDuration) {
       if (!lastOneSent) {
         socket.emit("poses:req", {
           startTime: prevTime,

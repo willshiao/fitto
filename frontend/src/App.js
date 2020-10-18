@@ -12,15 +12,13 @@ import {
 function App() {
   return (
     <div className="App">
-      <div className="container-fluid">
-        <Router>
-          <Switch>
-            <Route exact path="/" component={Home} />
-            <Route exact path="/session" component={Session} />
-            <Route exact path="/results" component={Results} />
-          </Switch>
-        </Router>
-      </div>
+      <Router>
+        <Switch>
+          <Route exact path="/" component={Home} />
+          <Route exact path="/session" component={Session} />
+          <Route exact path="/results" component={Results} />
+        </Switch>
+      </Router>
     </div>
   );
 }
