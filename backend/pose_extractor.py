@@ -20,10 +20,11 @@ class PoseExtractor:
         frames_elasped = 0
         cap = cv2.VideoCapture(vid_path)
         fps = cap.get(5)
-        print(f'FPS: {fps}')
+        # print(f'FPS: {fps}')
 
-        if skip_first > 0:
-            cap.set(cv2.CAP_PROP_POS_FRAMES, skip_first)
+        # if skip_first > 0:
+        #     cap.set(cv2.CAP_PROP_POS_FRAMES, skip_first)
+        cnt = 0
         while(cap.isOpened()):
             frames_elasped += 1
             done = False
@@ -39,8 +40,12 @@ class PoseExtractor:
 
             if not cap.isOpened():
                 break
-            input_image, display_image, output_scale = posenet.read_cap(
-                cap, scale_factor=self.scale_factor, output_stride=self.output_stride)
+            try:
+                input_image, display_image, output_scale = posenet.read_cap(
+                    cap, scale_factor=self.scale_factor, output_stride=self.output_stride)
+            except Exception as e:
+                print('Failed to read frame: ', e)
+                break
 
             with torch.no_grad():
                 input_image = torch.Tensor(input_image)
@@ -58,5 +63,6 @@ class PoseExtractor:
                     min_pose_score=0.25)
 
                 if frame_cb is not None:
-                    frame_cb(pose_scores, keypoint_scores, keypoint_coords, frames_elasped, fps)
+                    frame_cb(pose_scores, keypoint_scores, keypoint_coords, frames_elasped, fps, cnt)
+                    cnt += 1
         return True

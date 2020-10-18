@@ -1,21 +1,7 @@
-import cv2
-import time
-import argparse
-import torch
 from sklearn import preprocessing
 import numpy as np
-# import posenet
-import numpy as np
-from scipy.spatial.distance import cosine
-from fastdtw import fastdtw
-import re
-import numpy as np
+import posenet
 
-
-PART_NAMES = [
-    "leftShoulder", "rightShoulder", "leftElbow", "rightElbow", "leftWrist", "rightWrist",
-    "leftHip", "rightHip", "leftKnee", "rightKnee", "leftAnkle", "rightAnkle"
-]
 
 def Normalize(pose_scores, keypoint_scores, keypoint_coords, thresh=0.1):
     keypoint_scores = keypoint_scores.reshape((17, -1))
@@ -52,25 +38,3 @@ def TimeSeries(dictionaries):
         for t in tups:
             TimeSeries[k] += t
     return TimeSeries
-
-def DTW(dict1,dict2):
-    # computes the DTW between two dictionaries & values
-    # outputs distances to dictionary distances
-    distances = {}
-    for key in dict1:
-        if key in PART_NAMES:
-            if dict1[key] and dict2[key]:
-                x = np.array(dict1[key]) + 0.00001
-                y = np.array(dict2[key]) + 0.00001
-                distances[key] = fastdtw(x, y, dist=cosine)[0]
-    return distances
-
-
-def MovePart(distances):
-    # Prints and outputs which body part to use
-    # Calculated by body part with the highest distance in DTW
-    movePart = max(distances, key=distances.get)
-    res_list = re.sub("([a-z])([A-Z])","\g<1> \g<2>", movePart)
-    movePart = ''.join(res_list).lower()
-    print('Move your %s.' %movePart)
-    return movePart

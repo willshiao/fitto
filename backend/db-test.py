@@ -15,14 +15,15 @@ print(mydb)
 
 sql = 'INSERT INTO poses (timestamp, video_str, pose_info) VALUES (%s, %s, %s)'
 cnt = 0
+cursor = mydb.cursor()
+
 def process_frame(pose_scores, keypoint_scores, keypoint_coords, frame_num, fps):
     global cnt
     seconds = frame_num / fps
     normalized = normalize(pose_scores, keypoint_scores, keypoint_coords)
     # print(normalized, seconds)
-    cursor = mydb.cursor()
     print('Inserting...')
-    cursor.execute(sql, (seconds, 'test_video2', ujson.dumps(normalized)))
+    cursor.execute(sql, (seconds, 'test_video3', ujson.dumps(normalized)))
     cnt += 1
     if cnt % 500 == 0:
         print('Committing...')
