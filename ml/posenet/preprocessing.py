@@ -2,6 +2,9 @@ from sklearn import preprocessing
 import numpy as np
 import posenet
 from constants import PART_NAMES
+import numpy as np
+from scipy.spatial.distance import cosine
+from fastdtw import fastdtw
 
 
 def Normalize(pose_scores, keypoint_scores, keypoint_coords, thresh=0.1):
@@ -39,3 +42,15 @@ def TimeSeries(dictionaries):
         for t in tups:
             TimeSeries[k] += t
     return TimeSeries
+
+def DTW(dict1,dict2):
+    # computes the DTW between two dictionaries & values
+    # outputs distances to dictionary distances
+    distances = {}
+    for key in dict1:
+        x = np.array(dict1[key])
+        y = np.array(dict2[key])
+        distances[key] = fastdtw(x, y, dist=cosine) # errors here - tuple index out of range
+    print(distances)
+    return distances
+
