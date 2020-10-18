@@ -1,7 +1,6 @@
-from flask import Flask
+from flask import Flask, request
 import youtube_dl
 
-import video_download
 app = Flask(__name__)
 
 @app.route('/')
@@ -13,8 +12,8 @@ def index():
 def hello():
     return 'return session page'
 
-@app.route('/video')
-def video():
+@app.route('/download')
+def download():
     yt_url = input('URL here pls:')
 
     ydl = youtube_dl.YoutubeDL({'outtmpl': '%(id)s.%(ext)s', 'format': 'bestvideo'})
@@ -35,8 +34,12 @@ def video():
     video_url = video['url']
     print(video_url)
 
+@app.route('/video', methods=['POST'])
+def video():
+    print(request.json['url'])
+    if request.json == None:
+        return 'ERROR: no JSON in request body'
+    return request.json['url']
+
 if __name__ == '__main__':
     app.run(debug=True)
-
-
-    # make path so when its called with url, downloads youtue video without audio
