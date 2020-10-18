@@ -8,27 +8,27 @@ import wt from './assets/featured/wt.jpg';
 const featuredData = [
   {
     duration: "11:10",
-    title: "Quick Ballet Barre NO INTROS | Rehearsal & Performance Warmup | Kathryn Morgan",
+    title: "Quick Ballet Barre NO INTROS",
     username: "Kathryn Morgan",
     thumbnail: "http://i3.ytimg.com/vi/dLXdGMdpIv0/hqdefault.jpg",
     userThumbnail: km,
-    url: ""
+    url: "https://www.youtube.com/watch?v=dLXdGMdpIv0"
   },
   {
     duration: "15:38",
-    title: "15 MIN DANCE PARTY WORKOUT - Full Body/No Equipment",
+    title: "15 MIN DANCE PARTY WORKOUT",
     username: "MadFit",
     thumbnail: "http://i3.ytimg.com/vi/1vRto-2MMZo/hqdefault.jpg",
     userThumbnail: mf,
-    url: ""
+    url: "https://www.youtube.com/watch?v=1vRto-2MMZo"
   },
   {
     duration: "16:59",
-    title: "BEST 15 min Beginner Workout for Fat Burning (NO JUMPING HIIT!!!)",
+    title: "BEST 15 min Beginner Workout",
     username: "emi wong",
     thumbnail: "http://i3.ytimg.com/vi/bleOTMDa3_4/hqdefault.jpg",
     userThumbnail: ew,
-    url: ""
+    url: "https://www.youtube.com/watch?v=bleOTMDa3_4"
   },
   {
     duration: "8:41",
@@ -40,7 +40,7 @@ const featuredData = [
   },
   {
     duration: "10:55",
-    title: "10 min Morning Yoga Full Body Stretch",
+    title: "10 min Morning Yoga",
     username: "Yoga with Kassandra",
     thumbnail: "http://i3.ytimg.com/vi/4pKly2JojMw/hqdefault.jpg",
     userThumbnail: yw,
@@ -48,7 +48,7 @@ const featuredData = [
   },
   {
     duration: "6:13",
-    title: "Taekwondo Poomsae 1 (Taegeuk Il Jang), 2020",
+    title: "Taekwondo Poomsae 1",
     username: "woo taekwon",
     thumbnail: "http://i3.ytimg.com/vi/bP_5GYMC0GQ/hqdefault.jpg",
     userThumbnail: wt,

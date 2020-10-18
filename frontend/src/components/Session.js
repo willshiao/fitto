@@ -46,6 +46,7 @@ function Session(props) {
         console.log("Got back data", data);
         const { score } = data;
         setUserScore(score.toFixed(2));
+        setAccuracies(prevAccuracies => [...prevAccuracies, score]);
       });
     }
   });
@@ -148,7 +149,7 @@ function Session(props) {
           ) : (
             <>
               Make sure you’ve allowed browser permissions!
-            <PoseNet className="Session__posenetModal" />
+            {/* <PoseNet className="Session__posenetModal" /> */}
             </>
           )}
         </ModalBody>
@@ -203,11 +204,11 @@ function Session(props) {
   };
 
   if (backClicked) {
-    return <Redirect push to={{ pathname: "/" }} />;
+    return <Redirect to="/" />
   }
 
   if (showWinner) {
-    return <Redirect push to={{ pathname: "/results", state: { userScore } }} />;
+    return <Redirect push to={{ pathname: "/results", state: { accuracies } }} />;
   }
 
   return (
@@ -221,7 +222,7 @@ function Session(props) {
       </div>}
       {youtubeUrl && <div className="Session__view">
       <ReactPlayer
-        url="https://www.youtube.com/watch?v=vHBR5MZmEsY"
+        url={youtubeUrl}
         ref={youtubeEl}
         playing={videoPlaying}
         onEnded={handleVideoDone}

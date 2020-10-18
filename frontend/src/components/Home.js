@@ -1,19 +1,30 @@
 import React, { useState } from 'react';
 import { Input } from "baseui/input";
 import { Button } from "baseui/button";
+import { toaster, ToasterContainer } from "baseui/toast";
 import { Redirect } from "react-router-dom";
 import Navigation from './Navigation';
 import { LightTheme, BaseProvider } from 'baseui';
 import banner from '../assets/banner.svg';
 import './Home.scss';
 import featuredData from '../featuredData';
+import youtubeUrl from 'youtube-url';
 
 function Home() {
   const [value, setValue] = useState("");
-  const [submitted, setSubmitted] = useState(false)
+  const [submitted, setSubmitted] = useState(false);
 
   const handleSubmit = () => {
-    console.log("Submitting with value", value);
+    if (youtubeUrl.valid(value)) {
+      setSubmitted(true); 
+    } else {
+      toaster.warning("Your URL is not a valid YouTube URL");
+    }
+  };
+
+  const handleFeaturedClick = (e, url) => {
+    e.preventDefault();
+    setValue(url);
     setSubmitted(true);
   };
 
@@ -56,9 +67,9 @@ function Home() {
         <div className="row justify-content-center">
           <div className="col-9">
             <div className="row justify-content-center">
-              {featuredData.map(({ thumbnail, duration, title, username }) => (
+              {featuredData.map(({ thumbnail, duration, title, username, url }) => (
                 <div className="col-4">
-                  <div className="Home__featuredCard" onClick={() => {}}>
+                  <div className="Home__featuredCard" onClick={e => handleFeaturedClick(e, url)}>
                     <img className="Home__videoThumbnail" src={thumbnail} alt=""/>
                     <div className="Home__videoDuration">
                       {duration}
@@ -78,6 +89,7 @@ function Home() {
           </div>
         </div>
       </div>
+      <ToasterContainer autoHideDuration={3000} />
     </BaseProvider>
   );
 }

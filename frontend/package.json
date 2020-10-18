@@ -19,7 +19,8 @@
     "reactstrap": "^8.6.0",
     "socket.io-client": "^2.3.1",
     "styletron-engine-atomic": "^1.4.6",
-    "styletron-react": "^5.2.7"
+    "styletron-react": "^5.2.7",
+    "youtube-url": "^0.5.0"
   },
   "scripts": {
     "start": "react-scripts start",

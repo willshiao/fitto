@@ -6,7 +6,7 @@ const BASE_URL = "";
 // }
 
 function sendVideo(url) {
-  return Promise.resolve({ videoUrl: "https://www.youtube.com/embed/ckiaNqOrG5U" })
+  return Promise.resolve({ videoUrl: url })
 }
 
 export default sendVideo;

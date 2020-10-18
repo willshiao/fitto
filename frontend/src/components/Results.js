@@ -6,7 +6,9 @@ import { Button } from "baseui/button";
 import { Redirect } from 'react-router-dom';
 
 function Results(props) {
-  const { location: { state: { userScore } } } = props;
+  const { location: { state: { accuracies } } } = props;
+  const getAverage = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
+
   const [finishClicked, setFinishClicked] = useState(false);
 
   if (finishClicked) {
@@ -24,7 +26,7 @@ function Results(props) {
             </div>
           </div>
           <div className="col-5">
-            <div className="Results__score">{userScore}</div>
+            <div className="Results__score">{getAverage(accuracies).toFixed(2)}</div>
             <div className="Results__info">
               <p>This is how you ended up doing on average! Aren’t satisfied with the score? Trying making sure with the following:</p>
               <ul>

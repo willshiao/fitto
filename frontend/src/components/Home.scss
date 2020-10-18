@@ -29,6 +29,8 @@
 
 .Home__featured {
   padding-top: 36px;
+  padding-bottom: 36px;
+
   .Home__featuredTitle {
     color: white;
     margin-bottom: 12px;
@@ -37,15 +39,12 @@
   .Home__featuredCard {
     position: relative;
     color: white;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    width: 100%;
     margin-bottom: 24px;
+    cursor: pointer;
 
     .Home__videoThumbnail {
       width: 100%;
-    }
+  }
 
     .Home__videoDuration {
       position: absolute;
