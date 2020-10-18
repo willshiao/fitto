@@ -28,6 +28,7 @@ function Session(props) {
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [isSessionOver, setIsSessionOver] = useState(false);
   const [lastOneSent, setLastOneSent] = useState(false);
+  const [showWinner, setShowWinner] = useState(true);
   const [counter, setCounter] = useState(3);
   const [userScore, setUserScore] = useState(0);
   const [data, setData] = useState(null);
@@ -60,6 +61,13 @@ function Session(props) {
   //     }
   //   }
   // }, [countingDown, counter, props]);
+  useEffect(() => {
+    socket.on("poses:res", data => {
+      console.log("Got back data", data);
+      const { score } = data;
+      setUserScore(score);
+    })
+  })
 
   const handleEstimate = poses => {
     const currentTime = youtubeEl.current.getCurrentTime();
@@ -160,12 +168,57 @@ function Session(props) {
     return modalLoading ? loadingContent : preparationContent;
   };
 
+  const renderResultContent = () => {
+    return (
+      <>
+        <ModalHeader>
+          Here are your results!
+        </ModalHeader>
+        <ModalBody>
+          {userScore}
+        </ModalBody>
+        <ModalFooter>
+          <ModalButton onClick={() => setBackClicked(true)}>
+            Finished
+          </ModalButton>
+        </ModalFooter>
+      </>
+    )
+  };
+
+  const handleVideoDone = () => {
+    setShowWinner(true);
+  };
+
   if (backClicked) {
     return <Redirect push to={{ pathname: "/" }} />;
   }
 
+  if (showWinner) {
+    return <Redirect push to={{ pathname: "/results", state: { userScore } }} />;
+  }
+
   return (
     <>
+      {showWinner ? (
+        renderResultContent()
+      ) : (
+        <>
+          {youtubeUrl && <div className="Session__view">
+          <ReactPlayer
+            url="https://www.youtube.com/watch?v=rUWxSEwctFU"
+            ref={youtubeEl}
+            playing={videoPlaying}
+            onEnded={handleVideoDone}
+            className="Session__youtube"
+          />
+          <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
+          </div>}
+          <div className="Session__scoreWrapper">
+            <div className="Session__score">{userScore}</div>
+          </div>
+        </>
+      )}
       <Modal
         onClose={() => setIsOpen(false)}
         closeable={false}
@@ -177,19 +230,6 @@ function Session(props) {
       >
         {renderModalContent()}
       </Modal>
-      {youtubeUrl && <div className="Session__view">
-        <ReactPlayer
-          url="https://www.youtube.com/watch?v=rUWxSEwctFU"
-          ref={youtubeEl}
-          playing={videoPlaying}
-          onEnded={() => setIsSessionOver(true)}
-          className="Session__youtube"
-        />
-        <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
-        <div className="Session__scoreWrapper">
-          <div className="Session__score">{userScore}</div>
-        </div>
-      </div>}
     </>
   );
 }
