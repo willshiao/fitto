@@ -15,6 +15,10 @@ import { Redirect } from "react-router-dom";
 import "./Session.scss";
 import sendVideo from '../services/video';
 import ReactPlayer from 'react-player';
+import socketIOClient from "socket.io-client";
+
+const BASE_URL = "http://b9c7f8f67b95.ngrok.io";
+const socket = socketIOClient(BASE_URL);
 
 function Session(props) {
   const [isOpen, setIsOpen] = useState(true);
@@ -22,9 +26,14 @@ function Session(props) {
   const [countingDown, setCountingDown] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
+  const [isSessionOver, setIsSessionOver] = useState(false);
+  const [lastOneSent, setLastOneSent] = useState(false);
   const [counter, setCounter] = useState(3);
+  const [userScore, setUserScore] = useState(0);
   const [data, setData] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState(null);
+  const [prevTime, setPrevTime] = useState(0);
+  const [poseBatch, setPoseBatch] = useState([]);
   const youtubeEl = useRef(null);
 
   // useEffect(() => {
@@ -53,7 +62,39 @@ function Session(props) {
   // }, [countingDown, counter, props]);
 
   const handleEstimate = poses => {
-    console.log("poses", poses);
+    const currentTime = youtubeEl.current.getCurrentTime();
+    const totalDuration = youtubeEl.current.getDuration();
+    const difference = currentTime - prevTime;
+
+    if (currentTime !== totalDuration) {
+      if (difference < 5) {
+        setPoseBatch(prevPoseBatch => [...prevPoseBatch, poses]);
+      } else {
+        console.log("Sending batch", poseBatch);
+
+        socket.emit("poses:req", {
+          startTime: prevTime,
+          endTime: currentTime,
+          poseBatch
+        });
+  
+        setPrevTime(currentTime);
+        setPoseBatch([]);
+      }
+    } else {
+      if (!lastOneSent) {
+        socket.emit("poses:req", {
+          startTime: prevTime,
+          endTime: currentTime,
+          poseBatch
+        });
+  
+        setPrevTime(currentTime);
+        setPoseBatch([]);
+      }
+
+      setLastOneSent(true);
+    }
   };
 
   const handleStart = () => {
@@ -64,6 +105,7 @@ function Session(props) {
       .then(response => {
         console.log("Got response", response);
         const { videoUrl } = response;
+
         setIsOpen(false);
         setYoutubeUrl(videoUrl);
       })
@@ -135,18 +177,19 @@ function Session(props) {
       >
         {renderModalContent()}
       </Modal>
-      <div className="Session__view">
-        {youtubeUrl && <ReactPlayer
-          url="https://www.youtube.com/embed/ckiaNqOrG5U"
+      {youtubeUrl && <div className="Session__view">
+        <ReactPlayer
+          url="https://www.youtube.com/watch?v=rUWxSEwctFU"
           ref={youtubeEl}
           playing={videoPlaying}
+          onEnded={() => setIsSessionOver(true)}
           className="Session__youtube"
-        />}
-        {/* <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} /> */}
+        />
+        <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
         <div className="Session__scoreWrapper">
-          <div className="Session__score">100</div>
+          <div className="Session__score">{userScore}</div>
         </div>
-      </div>
+      </div>}
     </>
   );
 }
