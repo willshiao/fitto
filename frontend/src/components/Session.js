@@ -16,10 +16,10 @@ import "./Session.scss";
 import sendVideo from '../services/video';
 import ReactPlayer from 'react-player';
 import socketIOClient from "socket.io-client";
-import { BASE_URL } from '../constants';
+import { SOCKET_URL } from '../constants';
 import Navigation from './Navigation';
 
-const socket = socketIOClient(BASE_URL);
+const socket = socketIOClient(SOCKET_URL);
 
 function Session(props) {
   const [isOpen, setIsOpen] = useState(true);
@@ -103,7 +103,7 @@ function Session(props) {
     }
   };
 
-  const handleStart = () => {
+  const handleReady = () => {
     const { location: { state: { videoUrl } } } = props;
     setModalLoading(true);
     setHasError(false);
@@ -111,7 +111,7 @@ function Session(props) {
     sendVideo(videoUrl)
       .then(response => {
         console.log("Got response", response);
-        const { videoUrl } = response;
+        const { data: { videoUrl } } = response;
 
         setIsOpen(false);
         setModalLoading(false);
@@ -156,7 +156,7 @@ function Session(props) {
           >
             Back
           </ModalButton>
-          <ModalButton onClick={handleStart}>Start</ModalButton>
+          <ModalButton onClick={handleReady}>Ready</ModalButton>
         </ModalFooter>
       </>
     );
@@ -176,7 +176,7 @@ function Session(props) {
           >
             Back
           </ModalButton>
-          <ModalButton onClick={handleStart}>Try again</ModalButton>
+          <ModalButton onClick={handleReady}>Try again</ModalButton>
         </ModalFooter>
       </>
     )
