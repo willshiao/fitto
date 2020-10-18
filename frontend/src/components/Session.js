@@ -17,6 +17,7 @@ import sendVideo from '../services/video';
 import ReactPlayer from 'react-player';
 import socketIOClient from "socket.io-client";
 import { BASE_URL } from '../constants';
+import Navigation from './Navigation';
 
 const socket = socketIOClient(BASE_URL);
 
@@ -201,24 +202,6 @@ function Session(props) {
     setVideoPlaying(true);
   }
 
-  const renderResultContent = () => {
-    return (
-      <>
-        <ModalHeader>
-          Here are your results!
-        </ModalHeader>
-        <ModalBody>
-          {userScore}
-        </ModalBody>
-        <ModalFooter>
-          <ModalButton onClick={() => setBackClicked(true)}>
-            Finished
-          </ModalButton>
-        </ModalFooter>
-      </>
-    )
-  };
-
   const handleVideoDone = () => {
     setShowWinner(true);
   };
@@ -233,29 +216,25 @@ function Session(props) {
 
   return (
     <>
-      {showWinner ? (
-        renderResultContent()
-      ) : (
-        <><div className="Session__scoreWrapper">
-              <p className="Session__accuracy">ACCURACY</p>
-            <div className="Session__score">
-            {userScore}
-              </div>
-          </div>
-          {youtubeUrl && <div className="Session__view">
-          <ReactPlayer
-            url="https://www.youtube.com/watch?v=jvY06zoY0M4"
-            ref={youtubeEl}
-            playing={videoPlaying}
-            onEnded={handleVideoDone}
-            className="Session__youtube"
-          />
-          <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
-          </div>
-          }
-          { !videoPlaying ? <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button> : null }
-        </>
-      )}
+      <Navigation />
+      {!isOpen && <div className="Session__scoreWrapper">
+        <p className="Session__accuracy">ACCURACY</p>
+      <div className="Session__score">
+      {userScore}
+        </div>
+      </div>}
+      {youtubeUrl && <div className="Session__view">
+      <ReactPlayer
+        url="https://www.youtube.com/watch?v=jvY06zoY0M4"
+        ref={youtubeEl}
+        playing={videoPlaying}
+        onEnded={handleVideoDone}
+        className="Session__youtube"
+      />
+      <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
+      </div>
+      }
+      {!videoPlaying && !isOpen && <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button>}
       <Modal
         onClose={() => setIsOpen(false)}
         closeable={false}

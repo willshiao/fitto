@@ -30,7 +30,7 @@ function Home() {
 
   return (
     <BaseProvider theme={LightTheme}>
-      <div className="Home">
+      <div className="Home__header">
         <Navigation />
         <div className="Home__actions">
           <div className="Home__text">Stay active at home, <br/> keep in shape.</div>

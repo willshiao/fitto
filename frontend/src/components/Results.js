@@ -26,7 +26,7 @@ function Results(props) {
           <div className="col-5">
             <div className="Results__score">{userScore}</div>
             <div className="Results__info">
-              <p>This is how you ended up doing! Aren’t satisfied with the score? Trying making sure of the following:</p>
+              <p>This is how you ended up doing on average! Aren’t satisfied with the score? Trying making sure with the following:</p>
               <ul>
                 <li>You’re surroundings are well-lit</li>
                 <li>No one else is around you</li>
