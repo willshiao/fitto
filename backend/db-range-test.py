@@ -1,6 +1,6 @@
 import mysql.connector
 from pose_extractor import PoseExtractor
-from preprocessing import Normalize as normalize
+from preprocessing import normalize
 import ujson
 
 pe = PoseExtractor()
@@ -18,5 +18,12 @@ mycursor = mydb.cursor()
 mycursor.execute(sql, (0, 1, 'test_video'))
 myresult = mycursor.fetchall()
 
+data_list = []
 for x in myresult:
-    print(x)
+    data = x[0]
+    if data == '{}':
+      continue
+    data = ujson.loads(data)
+    data_list.append(data)
+
+print(data_list)

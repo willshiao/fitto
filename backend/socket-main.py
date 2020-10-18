@@ -2,7 +2,7 @@ import mysql.connector
 from flask import Flask, render_template
 from flask_socketio import SocketIO, send, emit
 from random import random
-from preprocessing import to_timeseries, DTW, get_avg_dist, crop_dict
+from preprocessing import to_timeseries, DTW, get_avg_dist, crop_dict, get_part_to_move
 import re
 import ujson
 
@@ -53,7 +53,8 @@ def handle_poses(poses):
     print('Got DTW distances:', dtw_dists)
 
     # print('Pose timeseries:', pose_timeseries)
-    emit('poses:res', { 'score': get_avg_dist(dtw_dists), 'hint': ujson.dumps(sorted(dtw_dists.items(), key=lambda x: x[1])) })
+    # ujson.dumps(sorted(dtw_dists.items(), key=lambda x: x[1]))
+    emit('poses:res', { 'score': get_avg_dist(dtw_dists), 'hint': get_part_to_move(dtw_dists) })
 
 @socketio.on('connect')
 def test_connect():

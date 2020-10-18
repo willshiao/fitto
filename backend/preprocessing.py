@@ -1,3 +1,4 @@
+import math
 from collections import defaultdict
 import cv2
 import time
@@ -85,12 +86,14 @@ def DTW(dict1, dict2, normalize_user=False):
                 y = np.array(dict2[key]) + EPS
                 if normalize_user:
                     x = preprocessing.normalize(x, norm='l2')
-                dists = cdist(x, y, 'cosine')
-                min_dists = np.mean(dists, axis=1)
-                distances[key] = np.mean(min_dists)
+                # dists = cdist(x, y, 'cosine')
+                # min_dists = np.mean(dists, axis=1)
+                # distances[key] = np.mean(min_dists)
                 # print(f'matrices for {key}:', x, y)
-                # dist, path = fastdtw(x, y, dist=cosine)
-                # distances[key] = len(path)/dist
+                dist, path = fastdtw(x, y, dist=cosine)
+                scaled_dist = (1-dist/len(path))
+                scaled_dist = (max(0, scaled_dist - 0.45) / 0.55)
+                distances[key] = scaled_dist
                 # distances[key] = 1
     return distances
 
@@ -101,8 +104,10 @@ def get_avg_dist(dist_dict):
 def get_part_to_move(distances):
     # Prints and outputs which body part to use
     # Calculated by body part with the highest distance in DTW
+    if not distances:
+        return ''
     movePart = max(distances, key=distances.get)
     res_list = re.sub(r"([a-z])([A-Z])","\g<1> \g<2>", movePart)
     movePart = ''.join(res_list).lower()
     print('Move your %s.' %movePart)
-    return movePart
+    return f'Try moving your {movePart}.'
