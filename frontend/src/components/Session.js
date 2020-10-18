@@ -215,7 +215,10 @@ function Session(props) {
         renderResultContent()
       ) : (
         <><div className="Session__scoreWrapper">
-            <div className="Session__score">SCORE: {userScore}</div>
+              <p className="Session__accuracy">ACCURACY</p>
+            <div className="Session__score">
+            {userScore}
+              </div>
           </div>
           {youtubeUrl && <div className="Session__view">
           <ReactPlayer
@@ -226,7 +229,8 @@ function Session(props) {
             className="Session__youtube"
           />
           <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
-          </div>}
+          </div>
+          }
           { !videoPlaying ? <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button> : null }
         </>
       )}

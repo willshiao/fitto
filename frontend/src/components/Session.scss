@@ -46,17 +46,25 @@
 
 
 .Session__scoreWrapper {
-  background-color: #D36B6B;
-  padding: 0px 0px 0px 0px;
+  margin-bottom: 0;
+  color: white;
+  text-align: center;
+  font-size: 20px;
+  padding-top: 2%;
 }
+
+
 
 .Session__score {
   color: white;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  padding-top: 5%;
-  font-size: 5em;
+  display: block;
+  text-align: center;
+  font-size: 70px;
+  background-color: #D36B6B;
+  margin: 0 45% 0 45%;
+  padding-top: 0;
+  border-radius: 20px;
+  margin-bottom: 2%;
 }
 
 .Session__button {
