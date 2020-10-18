@@ -50,6 +50,13 @@
   display: flex;
   flex-direction: row;
   justify-content: center;
+  margin-top: 24px;
+}
+
+.Session__header {
+  display: flex;
+  flex-direction: row;
+  color: white;
 }
 
 
@@ -82,4 +89,10 @@
   font-size: 16px;
   letter-spacing: 2px;
   margin-bottom: 8px;
+}
+
+.Session__poseHint {
+  color: white;
+  text-align: center;
+  padding-top: 24px;
 }

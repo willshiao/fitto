@@ -22,20 +22,17 @@ import Navigation from './Navigation';
 const socket = socketIOClient(BASE_URL);
 
 function Session(props) {
-  console.log('New Session created')
   const [isOpen, setIsOpen] = useState(true);
   const [backClicked, setBackClicked] = useState(false);
-  const [countingDown, setCountingDown] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [lastOneSent, setLastOneSent] = useState(false);
   const [showWinner, setShowWinner] = useState(false);
   const [hasError, setHasError] = useState(false);
-  const [counter, setCounter] = useState(3);
   const [userScore, setUserScore] = useState(0);
-  const [data, setData] = useState(null);
   const [youtubeUrl, setYoutubeUrl] = useState(null);
   const [prevTime, setPrevTime] = useState(0);
+  const [poseHint, setPoseHint] = useState("");
   const [poseBatch, setPoseBatch] = useState([]);
   const [accuracies, setAccuracies] = useState([]);
   const youtubeEl = useRef(null);
@@ -44,12 +41,17 @@ function Session(props) {
     if (!socket.hasListeners('poses:res')) {
       socket.on('poses:res', data => {
         console.log("Got back data", data);
-        const { score } = data;
+        const { score, hint } = data;
         setUserScore(score.toFixed(2));
+        setPoseHint(hint);
         setAccuracies(prevAccuracies => [...prevAccuracies, score]);
       });
     }
   });
+
+  if (!props.location || !props.location.state || !props.location.state.videoUrl) {
+    return <Redirect to="/" />;
+  }
 
   const handleEstimate = poses => {
     const currentTime = youtubeEl.current.getCurrentTime();
@@ -144,14 +146,8 @@ function Session(props) {
           Are you prepared?
         </ModalHeader>
         <ModalBody>
-          {countingDown ? (
-            <div className="Session__count">{counter}</div>
-          ) : (
-            <>
-              Make sure you’ve allowed browser permissions!
-            {/* <PoseNet className="Session__posenetModal" /> */}
-            </>
-          )}
+          Make sure you’ve allowed browser permissions!
+          <PoseNet className="Session__posenetModal" />
         </ModalBody>
         <ModalFooter>
           <ModalButton
@@ -214,12 +210,16 @@ function Session(props) {
   return (
     <div className="Session">
       <Navigation />
-      {!isOpen && <div className="Session__scoreWrapper">
-        <p className="Session__accuracy">ACCURACY</p>
-      <div className="Session__score">
-      {userScore}
+      {!isOpen && 
+        <div className="Session__header">
+          <div className="Session__scoreWrapper">
+            <p className="Session__accuracy">ACCURACY</p>
+            <div className="Session__score">
+              {userScore}
+            </div>
+          </div>
         </div>
-      </div>}
+      }
       {youtubeUrl && <div className="Session__view">
       <ReactPlayer
         url={youtubeUrl}
@@ -231,7 +231,11 @@ function Session(props) {
       <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
       </div>
       }
-      {!videoPlaying && !isOpen && <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button>}
+      {!videoPlaying && !isOpen ? (
+        <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button>
+      ) : (
+        <div className="Session__poseHint">{poseHint}</div>
+      )}
       <Modal
         onClose={() => setIsOpen(false)}
         closeable={false}
