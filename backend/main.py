@@ -14,7 +14,7 @@ YT_REGEX = re.compile(r'^.*(?:(?:youtu\.be\/|v\/|vi\/|u\/\w\/|embed\/)|(?:(?:wat
 pe = PoseExtractor()
 # DB behind ACL, kinda okay to expose pass
 mydb = mysql.connector.connect(
-  host="35.233.247.13",
+  host="10.67.16.3",
   user="root",
   password="oBY8AF6p8L3ZqLXNAeXv",
   database='fitto'
