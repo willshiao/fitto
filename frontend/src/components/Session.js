@@ -24,6 +24,7 @@ function Session(props) {
   const [videoPlaying, setVideoPlaying] = useState(false);
   const [counter, setCounter] = useState(3);
   const [data, setData] = useState(null);
+  const [youtubeUrl, setYoutubeUrl] = useState(null);
   const youtubeEl = useRef(null);
 
   // useEffect(() => {
@@ -58,15 +59,18 @@ function Session(props) {
   const handleStart = () => {
     const { location: { state: { videoUrl } } } = props;
     setModalLoading(true);
+
     sendVideo(videoUrl)
       .then(response => {
         console.log("Got response", response);
+        const { videoUrl } = response;
+        setIsOpen(false);
+        setYoutubeUrl(videoUrl);
       })
       .catch(error => {
         console.error("Error", error);
         setIsOpen(false);
-      })
-    // send info
+      });
   };
 
   const renderModalContent = () => {
@@ -114,11 +118,6 @@ function Session(props) {
     return modalLoading ? loadingContent : preparationContent;
   };
 
-  const onButtonClick = () => {
-    console.log(youtubeEl.current.getCurrentTime())
-    setVideoPlaying(prevVideoPlaying => !prevVideoPlaying);
-  }
-
   if (backClicked) {
     return <Redirect push to={{ pathname: "/" }} />;
   }
@@ -127,7 +126,7 @@ function Session(props) {
     <>
       <Modal
         onClose={() => setIsOpen(false)}
-        closeable
+        closeable={false}
         isOpen={isOpen}
         animate
         autoFocus
@@ -136,9 +135,18 @@ function Session(props) {
       >
         {renderModalContent()}
       </Modal>
-      <ReactPlayer url="https://www.youtube.com/embed/ckiaNqOrG5U" ref={youtubeEl} playing={videoPlaying} />
-      {/* <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} /> */}
-      <Button onClick={onButtonClick}>Click</Button>
+      <div className="Session__view">
+        {youtubeUrl && <ReactPlayer
+          url="https://www.youtube.com/embed/ckiaNqOrG5U"
+          ref={youtubeEl}
+          playing={videoPlaying}
+          className="Session__youtube"
+        />}
+        {/* <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} /> */}
+        <div className="Session__scoreWrapper">
+          <div className="Session__score">100</div>
+        </div>
+      </div>
     </>
   );
 }

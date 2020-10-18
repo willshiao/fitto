@@ -25,5 +25,25 @@
 }
 
 .Session__posenetMain {
-  width: 256px
+  display: block;
+  height: 360px;
+  width: 548px;
+  margin: auto 8px;
+}
+
+.Session__youtube {
+  pointer-events: none;
+  display: block;
+  width: 584px;
+  margin: auto 8px;
+}
+
+.Session__view {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.Session__score {
+  color: white;
 }
