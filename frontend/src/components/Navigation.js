@@ -10,11 +10,9 @@ function Navigation() {
   return (
     <div className="Navigation__wrapper">
       <Navbar dark expand="md" className="Navigation p-4">
-        <div className="Navigation__brand">
-          <NavbarBrand href="/">
-            <img src={logo} alt=""/>
-          </NavbarBrand>
-        </div>
+        <NavbarBrand href="/">
+          <img src={logo} alt=""/>
+        </NavbarBrand>
       </Navbar>
     </div>
   )

@@ -6,10 +6,14 @@ import { Button } from "baseui/button";
 import { Redirect } from 'react-router-dom';
 
 function Results(props) {
-  const { location: { state: { accuracies } } } = props;
   const getAverage = arr => arr.reduce((a, b) => a + b, 0) / arr.length;
-
   const [finishClicked, setFinishClicked] = useState(false);
+
+  if (!props.location || !props.location.state || !props.location.state.accuracies) {
+    return <Redirect to="/" />;
+  }
+
+  const { location: { state: { accuracies } } } = props;
 
   if (finishClicked) {
     return <Redirect push to={{ pathname: "/" }} />;

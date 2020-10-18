@@ -45,7 +45,7 @@ function Home() {
       <div className="Home__header">
         <Navigation />
         <div className="Home__actions">
-          <div className="Home__text">Stay active at home, <br/> keep in shape.</div>
+          <div className="Home__text">Work(out) from home, <br/> stay in shape.</div>
           <div className="Home__search">
             <Input
               value={value}
