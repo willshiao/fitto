@@ -32,7 +32,7 @@
 }
 
 .Session__youtube {
-  // pointer-events: none;
+  pointer-events: none;
   display: block;
   width: 584px;
   margin: auto 8px;
@@ -44,6 +44,23 @@
   justify-content: center;
 }
 
+
+.Session__scoreWrapper {
+  background-color: #D36B6B;
+  padding: 0px 0px 0px 0px;
+}
+
 .Session__score {
   color: white;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  padding-top: 5%;
+  font-size: 5em;
+}
+
+.Session__button {
+  display: block !important;
+  margin: 0 auto !important;
+  margin-top: 2% !important;
 }

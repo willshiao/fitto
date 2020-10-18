@@ -8,7 +8,7 @@ import {
   SIZE,
   ROLE
 } from "baseui/modal";
-import { Button, KIND as ButtonKind } from "baseui/button";
+import { Button, SIZE as ButtonSize, KIND as ButtonKind } from "baseui/button";
 import { Spinner } from "baseui/spinner";
 import PoseNet from "react-posenet"
 import { Redirect } from "react-router-dom";
@@ -74,11 +74,11 @@ function Session(props) {
     const totalDuration = youtubeEl.current.getDuration();
     const difference = currentTime - prevTime;
 
-    const pose = poses[0];
-    const { keypoints } = pose;
-    Object.keys(keypoints).forEach((key, index) => {
+    // const pose = poses[0];
+    // const { keypoints } = pose;
+    // Object.keys(keypoints).forEach((key, index) => {
       
-    })
+    // })
 
     if (currentTime !== totalDuration && currentTime > 0) {
       if (difference < 2) {
@@ -174,6 +174,11 @@ function Session(props) {
     return modalLoading ? loadingContent : preparationContent;
   };
 
+  const onButtonClick = () => {
+    console.log(youtubeEl.current.getCurrentTime())
+    setVideoPlaying(true);
+  }
+
   const renderResultContent = () => {
     return (
       <>
@@ -209,7 +214,9 @@ function Session(props) {
       {showWinner ? (
         renderResultContent()
       ) : (
-        <>
+        <><div className="Session__scoreWrapper">
+            <div className="Session__score">SCORE: {userScore}</div>
+          </div>
           {youtubeUrl && <div className="Session__view">
           <ReactPlayer
             url="https://www.youtube.com/watch?v=rUWxSEwctFU"
@@ -220,9 +227,7 @@ function Session(props) {
           />
           <PoseNet className="Session__posenetMain" onEstimate={handleEstimate} />
           </div>}
-          <div className="Session__scoreWrapper">
-            <div className="Session__score">{userScore}</div>
-          </div>
+          { !videoPlaying ? <Button className="Session__button" size={ButtonSize.large} onClick={onButtonClick}>Start</Button> : null }
         </>
       )}
       <Modal
