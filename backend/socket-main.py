@@ -44,7 +44,7 @@ def get_timeseries(video_url, start_time, end_time):
 def handle_poses(poses):
     print('Got pose request')
     vid_url = poses['videoUrl']
-    cropped_dicts = [crop_dict(x) for x in poses['poseBatch']]
+    cropped_dicts = [crop_dict(x) for x in poses['poseBatch'] if x is not None]
     user_pose_timeseries = to_timeseries(cropped_dicts)
     print('Got user timeseries, getting good timeseries')
     good_timeseries = get_timeseries(vid_url, poses['startTime'], poses['endTime'])
@@ -53,7 +53,7 @@ def handle_poses(poses):
     print('Got DTW distances:', dtw_dists)
 
     # print('Pose timeseries:', pose_timeseries)
-    emit('poses:res', { 'score': get_avg_dist(dtw_dists) })
+    emit('poses:res', { 'score': get_avg_dist(dtw_dists), 'hint': ujson.dumps(sorted(dtw_dists.items(), key=lambda x: x[1])) })
 
 @socketio.on('connect')
 def test_connect():

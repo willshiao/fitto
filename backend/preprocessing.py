@@ -7,7 +7,7 @@ from sklearn import preprocessing
 import numpy as np
 import posenet
 import numpy as np
-from scipy.spatial.distance import cosine
+from scipy.spatial.distance import cosine, cdist
 from fastdtw import fastdtw
 import re
 import numpy as np
@@ -55,6 +55,8 @@ def to_timeseries(dictionaries):
     return ts
 
 def crop_dict(pose_dict):
+    if pose_dict is None:
+        return None
     min_x = 10**6
     min_y = 10**6
     for v in pose_dict.values():
@@ -75,15 +77,21 @@ def DTW(dict1, dict2, normalize_user=False):
     # outputs distances to dictionary distances
     distances = {}
     for key in dict1:
-        if key in PART_NAMES:
+        if key in posenet.PART_NAMES:
+            if key == 'leftEye' or key == 'rightEye':
+                continue
             if dict1[key] and dict2[key]:
                 x = np.array(dict1[key]) + EPS
                 y = np.array(dict2[key]) + EPS
                 if normalize_user:
                     x = preprocessing.normalize(x, norm='l2')
-                print(f'matrices for {key}:', x, y)
-                dist, path = fastdtw(x, y, dist=cosine)
-                distances[key] = dist/len(path)
+                dists = cdist(x, y, 'cosine')
+                min_dists = np.mean(dists, axis=1)
+                distances[key] = np.mean(min_dists)
+                # print(f'matrices for {key}:', x, y)
+                # dist, path = fastdtw(x, y, dist=cosine)
+                # distances[key] = len(path)/dist
+                # distances[key] = 1
     return distances
 
 
