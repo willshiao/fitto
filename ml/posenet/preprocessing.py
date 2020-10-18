@@ -1,6 +1,7 @@
 from sklearn import preprocessing
 import numpy as np
 import posenet
+from constants import PART_NAMES
 
 
 def Normalize(pose_scores, keypoint_scores, keypoint_coords, thresh=0.1):
@@ -27,3 +28,14 @@ def Normalize(pose_scores, keypoint_scores, keypoint_coords, thresh=0.1):
         if mask[i]:
             output[posenet.PART_NAMES[i]] = (normalized_coords[i, 0], normalized_coords[i, 1])
     return output
+
+def TimeSeries(dictionaries):
+    # combines list of dictionaries
+    TimeSeries = {}
+    # Iterate every part name and combine part values
+    for k in PART_NAMES:
+        tups = [TimeSeries[k] for TimeSeries in dictionaries if k in TimeSeries]
+        TimeSeries[k] = ()
+        for t in tups:
+            TimeSeries[k] += t
+    return TimeSeries
