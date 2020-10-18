@@ -1,3 +1,7 @@
+import cv2
+import time
+import argparse
+import torch
 from sklearn import preprocessing
 import numpy as np
 import posenet
@@ -48,9 +52,11 @@ def DTW(dict1,dict2):
     # outputs distances to dictionary distances
     distances = {}
     for key in dict1:
-        x = np.array(dict1[key])
-        y = np.array(dict2[key])
-        distances[key] = fastdtw(x, y, dist=cosine) # errors here - tuple index out of range
-    print(distances)
+        if dict1[key] and dict2[key]:
+            x = np.array(dict1[key]) + 0.00001
+            y = np.array(dict2[key]) + 0.00001
+            # print(key, x, y)
+            distances[key] = fastdtw(x, y, dist=cosine)[0]
     return distances
+
 
